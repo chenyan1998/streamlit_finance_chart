@@ -8,6 +8,8 @@ import plotly.express as px
 import plotly.figure_factory as ff
 from collections import namedtuple
 import streamlit.components.v1 as stc
+from streamlit_tags import st_tags, st_tags_sidebar
+
 
 # File Processing Pkgs
 import altair as alt
@@ -60,6 +62,8 @@ def read_pdf_with_pdfplumber(file):
 def load_image(image_file):
 	img = Image.open(image_file)
 	return img 
+
+    
 
 #start
 """
@@ -134,31 +138,7 @@ def main():
                     raw_text = docx2txt.process(docx_file) # Parse in the uploadFile Class directory
                     st.write(raw_text)
 
-                # x_col = st.text_input("Column x : ")
-                # y_col= st.text_input("Column y: ")
-
-                # df_colx = df.iloc[:,14]
-                # # #st.dataframe(df_colx)
-                # df_coly1 = df.iloc[:,15]
-                # df_coly2 = df.iloc[:,13]
-                # df_coly3 = df.iloc[:,12]
-                    
-                # #select data 
-                # FEL = df['FEL']
-                # followers = df['followers']
-                # make_choice = st.selectbox('Select your data:', df)
-                # year_choice = st.selectbox('', FEL)
-                # model_choice = st.selectbox('', followers)
                 
-                #st.dataframe(df_coly)
-                
-                # chart_data = pd.DataFrame(df_colx,df_coly1)
-                # st.line_chart(chart_data)
-                # # st.altair_chart(df_colx,df_coly, use_container_width=True)
-
-                # #mul lines in one graph
-                # chart_data = pd.DataFrame(df_colx, columns=['FEL', 'frends_zTransformation'])
-
                             
     elif choice == "Data Analysis":
             st.subheader(":open_file_folder: All import dataset ")
@@ -183,13 +163,12 @@ def main():
             dataset_select = pd.read_csv(path)
             this_dataset = st.checkbox('Show dataset')
             if this_dataset: 
-                st.write(dataset_select)
-             
+                st.write(dataset_select) 
 
             # Select X axis 
             st.subheader(":pushpin: Select axis X : ")
-            col_name = list(dataset_select.columns)
-            value = st.selectbox("Click below to select axis X ", col_name)
+            col_namex = list(dataset_select.columns)
+            value = st.selectbox("Click below to select axis X " , col_namex)
             st.write("You selected the column ",value,"as X axis")
             st.subheader("Show column X : ")
             select_colx = value
@@ -201,8 +180,8 @@ def main():
 
             # Select Y axis
             st.subheader(":pushpin: Select axis Y : ")
-            col_name = list(dataset_select.columns)
-            value = st.selectbox("Click below to select axis Y ", col_name)
+            col_namey = list(dataset_select.columns)
+            value = st.selectbox("Click below to select axis Y ", col_namey)
             st.write("You selected the column ",value,"as Y axis")
             st.subheader("Show column Y : ")
             select_coly = value
@@ -211,15 +190,42 @@ def main():
             if dataframe_y: 
                 st.write(data_y)
 
+            # Multi col select 
+            st.write("# Visualize Data ")
+            maxtags = st.slider('Number of tags allowed?', 1, 10, 3, key='jfnkerrnfvikwqejn')
+            col_name = list(dataset_select.columns)
+            st.write("You should write column name on the list ",col_name)
+
+            keywords = st_tags(
+                label='# Enter Column name:',
+                text='Press enter to add more',
+                value= col_name,
+                suggestions=['five', 'six', 'seven', 'eight', 'nine', 'three', 'eleven', 'ten', 'four'],
+                maxtags=maxtags,
+                key="aljnf")
+            
+            # for i in range(len(keywords)):
+            #     n = keywords[i]
+            #     select_col = n
+            #     dataselect = dataset_select[select_col]
+                
+            #     data = st.checkbox('Show data select : ')
+            #     if data: 
+            #         st.write(dataselect)
+            #     st.write("Keywords Select(one by one)")
+            #     st.write(n)
+
             # Visualize datax, datay seperately on one graph, two col, two lines
             st.subheader(":chart_with_upwards_trend: Visualize the column x and column y seperately")
             chart_menu_sep = ["Line Chart","Bar Chart","Scatter Chart"] 
             chart_choice_sep = st.selectbox("Chose the types of chart you want ",chart_menu_sep)
-            chart_data = pd.concat([data_x, data_y], axis=1)
+            col_name = keywords
+            chart_data = dataset_select[col_name]
 
             if chart_choice_sep == "Line Chart":
                 st.subheader('Line Chart')
                 st.line_chart(chart_data)
+
 
            
             if chart_choice_sep == "Bar Chart":
@@ -375,7 +381,139 @@ def main():
                             'https://twitter.com/paduel_py).\n\n'
                             'Check the code at https://github.com/paduel/streamlit_finance_chart')
     elif choice == "Others":
-        st.subheader("Others")
+        st.subheader(" Generate Report ")
+        # Multi col select 
+        st.write("# Chose Multiple Dataset ")
+        maxtags = st.slider('Number of Dataset allowed?', 1, 10, 3, key='jfnkerrnfvikwqejn')
+        result = find_csv_filenames("/Users/chenyan/Documents/GitHub/streamlit_finance_chart/tempDir",suffix=".csv")
+        dataset_name = result
+        st.write("You should write the name of dataset that on the list ",dataset_name)
+        
+        keywords1 = st_tags(
+            label='# Enter Dataset name:',
+            text='Press enter to add more',
+            value= dataset_name,
+            suggestions=['five', 'six', 'seven', 'eight', 'nine', 'three', 'eleven', 'ten', 'four'],
+            maxtags=maxtags,
+            key="aljnf")
+
+        for i in range(len(keywords1)+1):
+            st.write("keywords length : ", keywords1)
+            string = keywords1[i] 
+            path = "/Users/chenyan/Documents/GitHub/streamlit_finance_chart/tempDir" + "/" + string
+            st.write(path)
+            dataset_select = pd.read_csv(path)
+            this_dataset = st.checkbox('Show dataset' + str(i))
+            if this_dataset: 
+                st.write(dataset_select) 
+
+            # Select X axis 
+            st.subheader(":pushpin: Select axis X : ")
+            col_namex = list(dataset_select.columns)
+            value = st.selectbox("Click below to select axis X " + str(i), col_namex)
+            st.write("You selected the column ",value,"as X axis")
+            st.subheader("Show column X : ")
+            select_colx = value
+            data_x = dataset_select[select_colx]
+            dataframe_x = st.checkbox('Show dataframe of column X : ' + str(i))
+            if dataframe_x: 
+                st.write(data_x)
+            
+
+            # Select Y axis
+            st.subheader(":pushpin: Select axis Y : ")
+            col_namey = list(dataset_select.columns)
+            value = st.selectbox("Click below to select axis Y " + str(i), col_namey)
+            st.write("You selected the column ",value,"as Y axis")
+            st.subheader("Show column Y : ")
+            select_coly = value
+            data_y = dataset_select[select_coly]
+            dataframe_y = st.checkbox('Show dataframe of column Y : ' + str(i))
+            if dataframe_y: 
+                st.write(data_y)
+
+            # Multi col select 
+            st.write("# Visualize Data ")
+            maxtags = st.slider('Number of tags allowed?', 1, 10, 3, key='jfnkerrnfvikwqejn'+ str(i))
+            col_name = list(dataset_select.columns)
+            st.write("You should write column name on the list ",col_name)
+
+            keywords = st_tags(
+                label='# Enter Column name:',
+                text='Press enter to add more',
+                value= col_name,
+                suggestions=['five', 'six', 'seven', 'eight', 'nine', 'three', 'eleven', 'ten', 'four'],
+                maxtags=maxtags,
+                key="aljnf" + str(i))
+            
+            # for i in range(len(keywords)):
+            #     n = keywords[i]
+            #     select_col = n
+            #     dataselect = dataset_select[select_col]
+                
+            #     data = st.checkbox('Show data select : ')
+            #     if data: 
+            #         st.write(dataselect)
+            #     st.write("Keywords Select(one by one)")
+            #     st.write(n)
+
+            # Visualize datax, datay seperately on one graph, two col, two lines
+            st.subheader(":chart_with_upwards_trend: Visualize the column x and column y seperately")
+            chart_menu_sep = ["Line Chart","Bar Chart","Scatter Chart"] 
+            chart_choice_sep = st.selectbox("Chose the types of chart you want " + str(i),chart_menu_sep)
+            col_name = keywords
+            chart_data = dataset_select[col_name]
+
+            if chart_choice_sep == "Line Chart":
+                st.subheader('Line Chart')
+                st.line_chart(chart_data)
+
+
+           
+            if chart_choice_sep == "Bar Chart":
+                st.subheader('Bar Chart')
+                st.bar_chart(chart_data)
+
+            
+            if chart_choice_sep == "Area Chart":
+                st.subheader('Area Chart')
+                st.area_chart(chart_data)
+
+            # # Visualize the relationship between X and Y 
+            # st.subheader(":chart_with_downwards_trend: Visualize the relationship between X and Y")
+            # chart_menu = ["Line chart","Bar chart","Scatter chart"] 
+            # chart_choice = st.selectbox("Chose the types of chart you want ",chart_menu)
+            # chart_data = pd.concat([data_x, data_y], axis=1)
+            # df_xy = st.checkbox('Show dataframe of this chart')
+            # if df_xy: 
+            #     st.write(chart_data)
+
+            # if chart_choice == "Line chart":
+            #     st.subheader("Line chart")
+            #     fig = px.line(dataset_select,x=data_x,y=data_y,title=f'{select_colx} vs. {select_coly}')
+            #     st.plotly_chart(fig)
+            
+            # elif chart_choice == "Bar chart":
+            #     st.subheader("Bar chart")
+            #     fig = px.bar(dataset_select,x=data_x,y=data_y,title=f'{select_colx} vs. {select_coly}')
+            #     st.plotly_chart(fig)
+
+            # elif chart_choice == "Scatter chart":
+            #     st.subheader("Scatter chart")
+            #     fig = px.scatter(x=data_x,y=data_y,title=f'{select_colx} vs. {select_coly}')
+            #     st.plotly_chart(fig)
+            
+            
+            
+            
+
+        # Select 
+        # st.subheader(':file_folder: Select Multiple dataset that you want to analysis ')
+        # path = "/Users/chenyan/Documents/GitHub/streamlit_finance_chart/tempDir" + "/" + string
+        # dataset_select = pd.read_csv(path)
+        # this_dataset = st.checkbox('Show dataset')
+        # if this_dataset: 
+        #     st.write(dataset_select)
 
     # Part2 
     # Left side - Navigation bar
