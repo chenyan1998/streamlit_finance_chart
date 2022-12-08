@@ -479,29 +479,29 @@ def main():
                 st.subheader('Area Chart')
                 st.area_chart(chart_data)
 
-            # # Visualize the relationship between X and Y 
-            # st.subheader(":chart_with_downwards_trend: Visualize the relationship between X and Y")
-            # chart_menu = ["Line chart","Bar chart","Scatter chart"] 
-            # chart_choice = st.selectbox("Chose the types of chart you want ",chart_menu)
-            # chart_data = pd.concat([data_x, data_y], axis=1)
-            # df_xy = st.checkbox('Show dataframe of this chart')
-            # if df_xy: 
-            #     st.write(chart_data)
+            # Visualize the relationship between X and Y 
+            st.subheader(":chart_with_downwards_trend: Visualize the relationship between X and Y")
+            chart_menu = ["Line chart","Bar chart","Scatter chart"] 
+            chart_choice = st.selectbox("Chose the types of chart you want " + str(i),chart_menu)
+            chart_data = pd.concat([data_x, data_y], axis=1)
+            df_xy = st.checkbox('Show dataframe of this chart'+ str(i))
+            if df_xy: 
+                st.write(chart_data)
 
-            # if chart_choice == "Line chart":
-            #     st.subheader("Line chart")
-            #     fig = px.line(dataset_select,x=data_x,y=data_y,title=f'{select_colx} vs. {select_coly}')
-            #     st.plotly_chart(fig)
+            if chart_choice == "Line chart":
+                st.subheader("Line chart")
+                fig = px.line(dataset_select,x=data_x,y=data_y,title=f'{select_colx} vs. {select_coly}')
+                st.plotly_chart(fig)
             
-            # elif chart_choice == "Bar chart":
-            #     st.subheader("Bar chart")
-            #     fig = px.bar(dataset_select,x=data_x,y=data_y,title=f'{select_colx} vs. {select_coly}')
-            #     st.plotly_chart(fig)
+            elif chart_choice == "Bar chart":
+                st.subheader("Bar chart")
+                fig = px.bar(dataset_select,x=data_x,y=data_y,title=f'{select_colx} vs. {select_coly}')
+                st.plotly_chart(fig)
 
-            # elif chart_choice == "Scatter chart":
-            #     st.subheader("Scatter chart")
-            #     fig = px.scatter(x=data_x,y=data_y,title=f'{select_colx} vs. {select_coly}')
-            #     st.plotly_chart(fig)
+            elif chart_choice == "Scatter chart":
+                st.subheader("Scatter chart")
+                fig = px.scatter(x=data_x,y=data_y,title=f'{select_colx} vs. {select_coly}')
+                st.plotly_chart(fig)
             
             
             
